@@ -1,0 +1,31 @@
+{
+  "name": "qualtrics-js-svlib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sstark-Mason/qualtrics-js-svlib.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sstark-Mason/qualtrics-js-svlib/issues"
+  },
+  "homepage": "https://github.com/sstark-Mason/qualtrics-js-svlib#readme",
+  "dependencies": {
+    "anylogger": "^1.0.11"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^2.79.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "ulog": "^2.0.0-beta.19"
+  }
+}

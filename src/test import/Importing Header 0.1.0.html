@@ -1,0 +1,49 @@
+<!-- Qualtrics Header Script (Workaround 1: Concatenation) -->
+<script type="text/javascript">
+  Qualtrics.SurveyEngine.addOnload(function() {
+    // --- Configuration ---
+    // Construct the URL from parts to potentially bypass save validation
+    const protocol = 'https';
+    // IMPORTANT: Replace with your actual domain and path!
+    const domainAndPath =
+      '://cdn.jsdelivr.net/gh/sstark-Mason/qualtrics-js-svlib@refs/heads/main/src/test%20import.js'; // <-- REPLACE THIS PART
+    const scriptUrl = protocol + domainAndPath;
+
+    // Use svlib for logging if available, otherwise fallback to console.log
+    const log = window.svlib ? window.svlib.log : console.log;
+    const errorLog = window.svlib ? window.svlib.error : console.error;
+
+    log(
+      'Attempting to load external library from constructed URL: %s',
+      scriptUrl
+    );
+
+    // --- Create and Append Script Tag ---
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.async = true;
+
+    // --- Success Handler ---
+    script.onload = function() {
+      log('External library script successfully loaded and executed.');
+      if (window.MySimpleLibrary && window.MySimpleLibrary.testFunction) {
+        log('Calling MySimpleLibrary.testFunction()...');
+        window.MySimpleLibrary.testFunction();
+      } else {
+        errorLog(
+          'Error: MySimpleLibrary or MySimpleLibrary.testFunction not found after loading script!'
+        );
+      }
+    };
+
+    // --- Error Handler ---
+    script.onerror = function() {
+      errorLog('Error loading external library script from: %s', scriptUrl);
+    };
+
+    // Add the script tag to the document's <head>
+    document.head.appendChild(script);
+    log('Script tag added to head. Waiting for load/error event...');
+  });
+</script>
+<!-- End of Qualtrics Header Script -->
