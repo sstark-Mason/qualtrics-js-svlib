@@ -1,34 +1,30 @@
-import { logMessage } from './utils.js';
+import { enableFeedbackOnQuestion, storeQuestionFeedbackAsEmbeddedData } from "./questionFeedback.js";
+import anylogger from 'anylogger';
+const log = anylogger('main.js');
 
-// This file defines the public API of the library
+export function addOnload() {
 
-// Private stuff can remain within this module scope
-let initCalled = false;
+  Qualtrics.SurveyEngine.addOnload(function() {
+    const log = anylogger.getLogger('addOnload');
+    log.log('SurveyEngine.onload');
 
-function privateHelper() {
-  logMessage('Private helper called.');
+
+    // Optionally, store feedback as embedded data when the survey is submitted
+    Qualtrics.SurveyEngine.addOnPageSubmit(function() {
+      storeQuestionFeedbackAsEmbeddedData();
+    });
+  });
 }
 
-// Public API methods
-function init(options = {}) {
-  logMessage(`Initializing with options: ${JSON.stringify(options)}`);
-  privateHelper();
-  initCalled = true;
-  // ... actual initialization logic ...
+
+const svlib = {
+  addOnload,
+  enableFeedbackOnQuestion,
+  storeQuestionFeedbackAsEmbeddedData
+};
+
+if (typeof window !== 'undefined') {
+  window.svlib = svlib;
 }
 
-function testFunction() {
-  if (!initCalled) {
-    logMessage('Warning: testFunction called before init!');
-  }
-  logMessage('testFunction executed successfully!');
-}
-
-// Export the public API explicitly
-// Note: Rollup's 'iife' format with a 'name' will automatically
-// assign the *default* export or an object of named exports
-// to window[name]. Let's export an object.
-export { init, testFunction };
-
-// Log when the main module itself is evaluated
-logMessage('main.js module evaluated.');
+export default svlib;
