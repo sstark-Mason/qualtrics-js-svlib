@@ -1,0 +1,49 @@
+/* Make sure your question-display-wrapper inherits this. */
+.feedback-wrapper {
+  position: relative;
+}
+
+/* the little “comment” button */
+.feedback-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5em;
+  z-index: 1001;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+/* the feedback box, hidden by default */
+.feedback-textarea {
+  position: absolute;
+  top: 10px;
+  right: 50px;           /* fallback/right-closed position */
+  width: calc(100% - 60px);
+  max-width: 300px;
+  height: 100px;
+  max-height: 200px;
+  z-index: 1000;
+  display: none;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 1em;
+  resize: vertical;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  font-family: Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+  box-sizing: border-box;
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+
+/* when open, show it */
+.feedback-textarea.open {
+  display: block;
+}
