@@ -1,0 +1,344 @@
+/* --- Comprehension Question Choice Styling --- */
+/* Behavior:
+- When a correct choice is selected, it turns green and gets disabled.
+- When an incorrect choice is selected, it turns red and stays enabled. It must be unselected for the user to continue.
+- When a selected incorrect choice is unselected, it fades and gets disabled.
+- When all correct choices are selected, all unselected incorrect choices are disabled.
+*/
+
+
+
+
+
+
+
+/* Make sure your question-display-wrapper inherits this. */
+.feedback-wrapper {
+  position: relative;
+}
+
+/* the little “comment” button */
+.feedback-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5em;
+  z-index: 1001;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+/* the feedback box, hidden by default */
+.feedback-textarea {
+  position: absolute;
+  top: 10px;
+  right: 50px;           /* fallback/right-closed position */
+  width: calc(100% - 60px);
+  max-width: 300px;
+  height: 100px;
+  max-height: 200px;
+  z-index: 1000;
+  display: none;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 1em;
+  resize: vertical;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  font-family: Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+  box-sizing: border-box;
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+
+/* when open, show it */
+.feedback-textarea.open {
+  display: block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:root {
+    --colors-primary-for-focus: #00000000;
+    --colors-primary-for-focus-on-bg: #00000000;
+}
+
+.svlib-details-question textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.svlib-details-question .question-error-wrapper {
+    padding: 0;
+}
+
+.svlib-details-question .question-display.rich-text {
+    font-size: 1rem;
+}
+
+/* START CHOICE LABELS */
+
+/* Base choice rules */
+.choice:is(.radio, .checkbox) .choice-label {
+    transition: background-color 0.15s ease-in, opacity 0.15s ease-in;
+}
+
+
+
+/* Choice is (CORRECT && DISABLED) */
+.choice:is(.radio, .checkbox):has(input[data-correctness="correct"][disabled]).selected .choice-label {
+    background-color: hsla(122, 87%, 57%, 1); /* Green */
+    /* &:hover {
+        background-color: hsla(122, 87%, 45%, 1);
+    } */
+
+}
+
+/* Choice is (CORRECT && UNSELECTED) */
+/* This should only happen if the page is refreshed. */
+.choice:is(.radio, .checkbox):has(input[data-correctness="correct"]):not(.selected) .choice-label {
+    background-color: hsla(122, 87%, 57%, 0.25); /* Quarter Green */
+    &:hover {
+        background-color: hsla(122, 87%, 37%, 0.25);
+    }
+}
+
+/* Choice is (INCORRECT && SELECTED) */
+.choice:is(.radio, .checkbox):has(input[data-correctness="incorrect"]).selected .choice-label {
+    /* transition: background-color 0.5s ease-in, opacity 0.5s ease-in; */
+    background-color: hsla(0, 79%, 72%, 1); /* Lightcoral */
+    &:hover {
+        background-color: hsla(0, 56%, 56%, 1);
+    }
+}
+
+/* Choice is (INCORRECT && DISABLED) */
+.choice:is(.radio, .checkbox):has(input[data-correctness="incorrect"][disabled]):not(.selected) .choice-label {
+    background-color: hsla(0, 79%, 72%, 0.25);
+    opacity: 0.5;
+}
+
+/* Choice is (NEVER SELECTED && DISABLED) */
+.choice:is(.radio, .checkbox):has(input[disabled]):not(.selected) .choice-label {
+    /* transition: background-color 0.5s ease-in, opacity 0.5s ease-in; */
+    opacity: 0.5;
+}
+
+/* Make input invisible since it overlaps imperfectly with the button visual */
+.choice:is(.radio, .checkbox) input[disabled] {
+    opacity: 0;
+}
+
+
+/* END CHOICE LABELS */
+
+/* START CHOICE */
+
+/* Disable pointer events on the PARENT choice element itself */
+.choice:is(.radio, .checkbox)[data-choice-disabled="disabled"] {
+    pointer-events: none !important;
+}
+
+.choice:is(.radio, .checkbox)[data-choice-disabled="disabled"] * {
+    pointer-events: none !important;
+}
+
+/* END CHOICE */
+
+.katex {
+  display: inline-block;
+  /* You might also want to adjust vertical alignment if needed,
+     though often the default is fine. Common values include:
+     vertical-align: middle;
+     vertical-align: baseline;
+     Try it without first, and add this if you notice
+     misalignment with the surrounding text.
+  */
+}
+
+
+/* --- Details Styling --- */
+
+li + li {
+  margin-top: 10px;
+}
+
+  /* --- Styling for the <summary> element (the clickable part) --- */
+  details > summary {
+    
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.4em; /* Space between label and marker */
+    padding: 0.4em 0.8em; /* Internal spacing on left and right of label */
+    background: #0073e6; /* Button color behind the label */
+    color: #fff; /* Label text color */
+    border-radius: 4px; /* Rounded corners */
+    font-weight: bold; /* Bold text for emphasis */
+    font-size: 1rem; /* Font size for the label */
+    user-select: none; /* Prevents text selection on rapid clicks */
+    transition: background 0.2s; /* Smooth transition for hover effect */
+    margin-top: 1.0rem;
+    
+    /* --- Styling for the default disclosure marker (triangle/arrow) --- */
+    /* Standard way */
+    &::marker {
+      content: ''; /* Hide default marker if using custom */
+    }
+    /* Webkit fallback (needed for older Safari/Chrome) */
+    &::-webkit-details-marker {
+      /* Example: display: none; /* Hide default marker if using custom */
+      display: none
+    }
+  }
+  
+  
+  /* --- Styling for the content *inside* <details> (excluding summary) --- */
+  details > *:not(summary) {
+    /* Styles for the content revealed when open */
+    /* Example: padding: 1rem; */
+    /* Example: border-top: 1px dashed #eee; /* If summary has no bottom border */
+    /* Example: background-color: #fff; */
+    background-color: #f9f9f9;
+    padding: 0.5rem 1rem 1rem 1rem; /* Internal spacing, top right bottom left */
+    border-radius: 4px 4px 4px 4px; /* Rounded corners */
+    border: 1px solid #ccc; /* Border around the content */
+    margin-top: 0.5rem; /* Space between summary and content */
+  }
+  
+  /* --- Hover state for <summary> --- */
+  summary:hover {
+    /* Visual feedback when the mouse is over the summary */
+    /* Example: background-color: #e5e5e5; */
+    /* Example: color: #000; */
+    background: #005bb5
+  }
+  
+  /* --- Focus state for <summary> (important for accessibility) --- */
+  summary:focus {
+    /* Visual feedback when the summary is focused (e.g., via keyboard) */
+    /* Example: box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); */
+    /* Example: outline: 2px solid blue; /* Alternative focus style */
+    outline: 2px solid #2B82D7;
+  }
+  
+  /* --- Optional: Custom Marker using ::before or ::after --- */
+
+    details > summary::before {
+        content: '➢'; /* Closed state marker */
+        transition: transform 0.1s; /* Smooth rotation */
+    }
+  
+    details[open] > summary::before {
+        transform: rotate(90deg); /* Example rotation */
+    }
+
+    details .content {
+        font-size: 1rem; /* Font size for paragraph text */
+    }
+  
+  
+
+
+/* --- Multi-Version Tab Styling --- */
+
+/* Style the dynamically created tab bar container */
+.mv-tab-bar {
+    /* Ensures container sizing is predictable */
+    box-sizing: border-box;
+    /* Prevents Qualtrics content from wrapping around */
+    width: 100%;
+    /* Add some space below the tabs, before the content */
+    margin-bottom: 0; /* Remove bottom margin here */
+  }
+  
+  /* Style the tab list within the bar */
+  .mv-tab-bar .mv-tabs {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 0; /* Adjusted margin */
+    /* Creates a bottom border that tabs sit on */
+    border-bottom: 1px solid #ccc;
+    /* Use flexbox for easy alignment */
+    display: flex;
+    flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+  }
+  
+  /* Style individual tab list items */
+  .mv-tab-bar .mv-tabs li {
+    margin: 0 2px -1px 0; /* Negative margin pulls tab border over the container border */
+    padding: 0;
+  }
+  
+  /* Style tab links */
+  .mv-tab-bar .mv-tabs li a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: #0073e6; /* Qualtrics blue */
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px 4px 0 0; /* Rounded top corners */
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  
+  /* Style tab links on hover (but not the active one) */
+  .mv-tab-bar .mv-tabs li a:not(.active):hover {
+    background-color: #ddd;
+    color: #005bb5;
+  }
+  
+  /* Style the active tab link */
+  .mv-tab-bar .mv-tabs li a.active {
+    background-color: #f9f9f9; /* Match content background */
+    color: #333; /* Darker text for active tab */
+    border-bottom-color: transparent; /* Make it look connected to the content */
+    cursor: default; /* No pointer needed for active tab */
+    font-weight: bold;
+  }
+  
+  /* --- Content Area Styling (No changes needed here) --- */
+  
+  .mv-container {
+    /* Remove top margin, as space is handled by tab bar */
+    margin-top: 0;
+    margin-bottom: 15px; /* Keep space below */
+    box-sizing: border-box;
+    /* Clear floats if tabs wrap heavily, though flex usually handles this */
+    clear: both;
+  }
+  
+  .mv-container .mv-version {
+    display: none;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-top: none; /* Border provided by active tab */
+    border-radius: 0 0 4px 4px; /* Rounded bottom corners */
+    background-color: #f9f9f9; /* Light grey shading */
+  }
+  
+  .mv-container .mv-version.active {
+    display: block;
+  }
+  
+  /* --- End Multi-Version Tab Styling --- */
+  
+  
