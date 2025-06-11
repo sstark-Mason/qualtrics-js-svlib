@@ -4,14 +4,14 @@ import debugLib from "debug";
 const debug = debugLib("svlib:questionTimer");
 declare const Qualtrics: any;
 
-export function enableQuestionTimer(this: any, interval: number = 1, timeLimit: number = 0, enforceFocus: boolean = false, displayTimer: boolean = false): void {
+export function enableQuestionTimer(qContext: any, interval: number = 1, timeLimit: number = 0, enforceFocus: boolean = false, displayTimer: boolean = false): void {
     // Usage: svlib.enableQuestionTimer(this);
     // const timer = new TimeLimitTimer(this, interval, timeLimit, () => {
     //     debug("Time limit reached for question %s, executing onTimeUp callback.", this.questionId);
     //     this.onTimeUp();
     // });
 
-    const timer = new TimeLimitTimer(this, interval, timeLimit);
+    const timer = new TimeLimitTimer(qContext, interval, timeLimit);
     timer.init();
 
 
