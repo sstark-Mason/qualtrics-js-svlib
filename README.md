@@ -61,3 +61,9 @@ Comprehension questions have two optional arguments: `correctChoices` and `requi
 `correctChoices` specifies choices that are considered correct. Correct choices are highlighted green and increase the respondant's stored comprehension score. Choices that are not specified in `correctChoices` are assumed to be incorrect and are highlighted red.
 
 `requiredChoices` specifies choices that are required to be selected in order to continue. By default, these are the same as `correctChoices` (i.e., demonstration of comprehension is required to continue to the next page). If you want to set a required choice without scoring it (e.g., "By selecting this box, I indicate that I understand and I'm ready to continue."), simply specify `requiredChoices` without specifying `correctChoices`.
+
+Comprehension questions are scored against a baseline of randomly selecting a correct answer. A correct choice is worth $ 1 - (hiddenCorrectChoices / hiddenChoices) $ at the time the choice is selected. For example, a question with 4 possible choices and 1 correct choice is worth $ 1 - (1/4) = 0.75$.
+
+When a choice is selected, its correctness is revealed and it's removed from the set of hidden choices. For example, selecting an incorrect choice on the first attempt of the above question makes it equivalent to a question with 3 possible choices and 1 correct choice. Selecting the correct choice on the second attempt is then worth $ 1 - (1/3) = 0.667 $.
+
+(I may change this to $0.5 - (n/(n+m))$. I may also add selectable modes, such as only increasing score if no incorrect choices are selected. Any thoughts here are appreciated.)

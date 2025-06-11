@@ -159,7 +159,7 @@ export function storeAllSessionFeedbackAsEmbeddedData(): void {
                 console.error("Error processing feedback for key %s: %s", key, error);
             }
         })
-        Qualtrics.SurveyEngine.setJSEmbeddedData("feedbackData", JSON.stringify(feedbackData));
+        Qualtrics.SurveyEngine.setJSEmbeddedData("questionFeedbackJSON", JSON.stringify(feedbackData));
     } catch (error) {
         console.error("Error storing session feedback as embedded data: %s", error);
     }

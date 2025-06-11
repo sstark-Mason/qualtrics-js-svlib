@@ -5,13 +5,11 @@ import { enableFeedbackOnQuestion, storeAllSessionFeedbackAsEmbeddedData } from 
 import { enableComprehensionQuestion } from "./comprehensionQuestionUtils";
 import { enableQuestionChoiceLogger } from "./questionEventUtils";
 import { NextButtonManager } from "./nextButtonManager";
+import { TimeLimitTimer } from "./questionTimeLimit";
 
 // This is the main entry point for your library.
 // Functions exported from here will be accessible on the global object
 // when bundled with esbuild's iife format and globalName.
-
-let nextButtonManager: NextButtonManager | null = null;
-(window as any).nextButtonManager = new NextButtonManager();
 
 console.log("svlib loading...");
 /**
@@ -38,6 +36,8 @@ export {
   storeAllSessionFeedbackAsEmbeddedData, 
   enableComprehensionQuestion, 
   enableQuestionChoiceLogger, 
+  NextButtonManager,
+  TimeLimitTimer,
  };
 
 console.info("svlib loaded and ready.");

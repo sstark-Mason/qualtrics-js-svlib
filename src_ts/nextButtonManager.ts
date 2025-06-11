@@ -12,7 +12,7 @@ export class NextButtonManager {
     private static instance: NextButtonManager | null = null;
     private requiredQuestions: QuestionPassState[];
 
-    constructor() {
+    private constructor() {
         localStorage.setItem("debug", "svlib:nextButtonManager"); // Enables debug logging for this class
         this.requiredQuestions = [];
         debug("NextButtonManager initialized with empty required questions list.");

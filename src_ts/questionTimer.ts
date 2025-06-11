@@ -4,69 +4,110 @@ import debugLib from "debug";
 const debug = debugLib("svlib:questionTimer");
 declare const Qualtrics: any;
 
-export function enableQuestionTimer(minutes: number = 0, seconds: number = 0): void {
-    // Usage: svlib.enableQuestionTimer(this);
+let timerInstance: BaseTimer | null = null;
 
-    const timer = new QuestionTimer(minutes, seconds);
-    timer.init();
+export function enableQuestionTimer(this: any, interval: number = 1, timeLimit: number = 0, enforceFocus: boolean = false, displayTimer: boolean = false): void {
+    // Usage: svlib.enableQuestionTimer(this);
+    const questionId = normalizeQuestionId(this.questionId);
+
+    if (!timerInstance) {
+
+        if (timeLimit > 0) {
+            timerInstance = new TimeLimitTimer(questionId, interval, timeLimit, () => {})
+        } else {
+            timerInstance = new SimpleTimer(questionId, interval);
+        }
+    }
+    timerInstance.start();
 
 }
 
-export class QuestionTimer {
-    private duration: number;
-    private startTime: number;
-    private elapsedTime: number;
+function saveTimerState(questionId: string, timer: BaseTimer): void {
+    const state = {
+        startTime: timer.startTime,
+        elapsedTime: timer.elapsedTime,
+    };
+    saveSessionJson(questionId + "_timerState", state);
+}
 
-    constructor(minutes: number = 0, seconds: number = 0) {
-        this.duration = minutes * 60 + seconds;
-        if (this.duration <= 0) {
-            throw new Error("Invalid duration for QuestionTimer. Must be greater than 0.");
-        }
-        this.startTime = Date.now();
+
+
+abstract class BaseTimer {
+    public questionId: string;
+    protected interval: number;
+    public startTime: number;
+    public elapsedTime: number;
+    protected intervalId: number | null; // ReturnType<typeof setInterval> | null = null;
+
+    constructor(questionId: string, interval: number = 1) {
+        this.questionId = normalizeQuestionId(questionId);
+        this.interval = interval * 1000; // Convert seconds to milliseconds
         this.elapsedTime = 0;
     }
 
-    public init(): void {
-        this.startTimer();
-        debug("QuestionTimer initialized with duration %d seconds.", this.duration);
-        
-        // Optionally, you can set up an interval to check the timer status
-        const intervalId = setInterval(() => {
-            if (this.getRemainingDuration() <= 0) {
-                this.stopTimer();
-                clearInterval(intervalId);
-                debug("QuestionTimer has ended.");
-            }
-        }, 1000); // Check every second
-    }
-
-    private startTimer(): void {
+    public start(): void {
         this.startTime = Date.now();
-        debug("Timer started for %d seconds.", this.duration);
+        this.intervalId = window.setInterval(() => {
+            this.onTick();
+        }, this.interval);
     }
 
-    private stopTimer(): void {
-        this.elapsedTime = (Date.now() - this.startTime) / 1000; // Convert to seconds
-        debug("Timer stopped. Elapsed time: %d seconds.", this.elapsedTime);
+    public stop(): void {
+        if (this.intervalId) {
+            this.getElapsedTime();
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
     }
 
-    public getRemainingDuration(): number {
-        const elapsed = (this.startTime - Date.now()) / 1000; // Convert to seconds
-        const remaining = Math.max(0, this.duration - elapsed);
-        debug("Remaining duration: %d seconds.", remaining);
-        return remaining;
+    public getElapsedTime(): number {
+        return Date.now() - this.startTime;
     }
 
-    // public logElapsedTime(): void {
-    //     const elapsed = this.getElapsedTime();
-    //     debug("Elapsed time for questionId %s: %d ms", this.questionId, elapsed);
-    // }
+    protected abstract onTick(): void;
+}
 
-    // public saveElapsedTimeToEmbeddedData(): void {
-    //     const elapsed = this.getElapsedTime();
-    //     if (window.Qualtrics && Qualtrics.SurveyEngine) {
-    //         Qualtrics.SurveyEngine.setEmbeddedData(`elapsedTime_${this.questionId}`, elapsed);
-    //         debug("Saved elapsed time %d ms to embedded data for questionId %s", elapsed, this.questionId);
-    //     }
-    // }
+
+export class SimpleTimer extends BaseTimer {
+    protected onTick(): void {
+        this.elapsedTime = this.getElapsedTime();
+        console.log("Elapsed time: %d s", this.elapsedTime / 1000);
+    }
+}
+
+
+export class TimeLimitTimer extends BaseTimer {
+    private timeLimit: number;
+    private onExpireCallback?: () => void;
+
+    constructor(questionId, interval: number = 1, timeLimit: number = 0, onExpireCallback?: () => void) {
+        super(questionId, interval);
+        this.timeLimit = timeLimit * 1000; // Convert seconds to milliseconds
+        this.onExpireCallback = onExpireCallback;
+    }
+
+    protected onTick(): void {
+        this.elapsedTime = this.getElapsedTime();
+        sessionStorage.setItem(this.questionId + "_elapsedTime", this.elapsedTime.toString());
+        if (this.elapsedTime >= this.timeLimit) {
+            this.stop();
+            if (this.onExpireCallback) {
+                this.onExpireCallback();
+            }
+            console.log("Time limit reached. Timer stopped.");
+        } else {
+            console.log("Elapsed time: %d s", this.elapsedTime / 1000);
+        }
+    }
+
+    public reset(): void {
+        this.stop();
+        this.elapsedTime = 0;
+    }
+
+    public getRemainingTime(): number {
+        return Math.max(0, this.timeLimit - this.elapsedTime);
+    }
+
+    protected onExpire(): void {}
 }
