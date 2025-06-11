@@ -5,7 +5,7 @@ import { enableFeedbackOnQuestion, storeAllSessionFeedbackAsEmbeddedData } from 
 import { enableComprehensionQuestion } from "./comprehensionQuestionUtils";
 import { enableQuestionChoiceLogger } from "./questionEventUtils";
 import { NextButtonManager } from "./nextButtonManager";
-import { TimeLimitTimer } from "./questionTimeLimit";
+import { enableQuestionTimer } from "./questionTimeLimit";
 
 // This is the main entry point for your library.
 // Functions exported from here will be accessible on the global object
@@ -37,7 +37,7 @@ export {
   enableComprehensionQuestion, 
   enableQuestionChoiceLogger, 
   NextButtonManager,
-  TimeLimitTimer,
+  enableQuestionTimer,
  };
 
 console.info("svlib loaded and ready.");
